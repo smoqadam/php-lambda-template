@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  ociphp2
+
+  Lumbda for generation thumbnail
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+Parameters:
+  BucketNamePrefix:
+    Type: String
+    Default: thumbnail-maker
+Resources:
+  thumbnailMakerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      ImageConfig:
+        Command:
+          - index # handler function
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Sub "${BucketNamePrefix}-thumbnail-smoqadam"
+      Events:
+        BucketEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref Bucket1
+            Events:
+              - 's3:ObjectCreated:*'
+    Metadata:
+      DockerTag: phpoci
+      DockerContext: ./
+      Dockerfile: Dockerfile
+  
+  Bucket1:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: !Sub "${BucketNamePrefix}-thumbnail-smoqadam"
