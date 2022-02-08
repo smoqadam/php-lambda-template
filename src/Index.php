@@ -4,7 +4,7 @@ $vendor_dir = '/opt/vendor';
 require_once $vendor_dir . '/autoload.php';
 
 
-class Index 
+class Index
 {
     private $s3;
 
@@ -27,7 +27,7 @@ class Index
             'Bucket' => $bucketName,
             'Key' => $object,
         ]);
-        echo "Downloading ".$object;
+        echo "Downloading " . $object;
         $path  = "/tmp/{$object}";
         file_put_contents($path, $file['Body']);
         echo "\nImage downloaded to {$path}";
@@ -40,7 +40,7 @@ class Index
 
         echo "\nUpladed to S3";
 
-        return true;
+        return $this->APIResponse(['status' => true]);
     }
 
 
@@ -66,17 +66,30 @@ class Index
         return $dest;
     }
 
-
-
     private function uploadToS3($fileName, $path)
     {
 
-        $bucket = "thumbnail-images-for-test-lambda-maker-smoqadam";
+        $bucket = "profile-img-abc-123-smoqadam-thumbnail";
 
         $this->s3->putObject([
             'Bucket' => $bucket,
             'Key' => $fileName,
             'SourceFile' => $path,
         ]);
+    }
+
+    function APIResponse($body)
+    {
+        $headers = array(
+            "Content-Type" => "application/json",
+            "Access-Control-Allow-Origin" => "*",
+            "Access-Control-Allow-Headers" => "Content-Type",
+            "Access-Control-Allow-Methods" => "OPTIONS,POST"
+        );
+        return json_encode(array(
+            "statusCode" => 200,
+            "headers" => $headers,
+            "body" => $body
+        ));
     }
 }

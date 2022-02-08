@@ -1,7 +1,7 @@
 #Lambda base image Amazon linux
 FROM public.ecr.aws/lambda/provided as builder 
 # Set desired PHP Version
-ARG php_version="7.4"
+ARG php_version="7.3.6"
 RUN yum clean all && \
     yum install -y autoconf \
                 bison \
@@ -24,7 +24,7 @@ RUN yum clean all && \
 RUN curl -sL https://github.com/php/php-src/archive/php-${php_version}.tar.gz | tar -xvz && \
     cd php-src-php-${php_version} && \
     ./buildconf --force && \
-    ./configure --prefix=/opt/php-7-bin/ --enable-gd --with-openssl --with-curl --with-zlib --without-pear --enable-bcmath --with-bz2 --enable-mbstring --with-mysqli --with-jpeg-dir=/usr/lib64 && \
+    ./configure --prefix=/opt/php-7-bin/ --with-gd --with-openssl --with-curl --with-zlib --without-pear --enable-bcmath --with-bz2 --enable-mbstring --with-mysqli --with-jpeg-dir=/usr/lib64 && \
     make -j 5 && \
     make install &&\
     /opt/php-7-bin/bin/php -v && \

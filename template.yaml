@@ -10,9 +10,9 @@ Globals:
   Function:
     Timeout: 3
 Parameters:
-  BucketNamePrefix:
+  BucketName:
     Type: String
-    Default: thumbnail-maker
+    Default: profile-img-abc-123-smoqadam
 Resources:
   thumbnailMakerFunction:
     Type: AWS::Serverless::Function
@@ -23,12 +23,14 @@ Resources:
           - index # handler function
       Policies:
         - S3CrudPolicy:
-            BucketName: !Sub "${BucketNamePrefix}-thumbnail-smoqadam"
+            BucketName: !Sub "${BucketName}"
+        - S3FullAccessPolicy:
+            BucketName: !Sub "${BucketName}-thumbnail"    
       Events:
         BucketEvent:
           Type: S3
           Properties:
-            Bucket: !Ref Bucket1
+            Bucket: !Ref ImageBucket
             Events:
               - 's3:ObjectCreated:*'
     Metadata:
@@ -36,7 +38,12 @@ Resources:
       DockerContext: ./
       Dockerfile: Dockerfile
   
-  Bucket1:
+  ImageBucket:
       Type: 'AWS::S3::Bucket'
       Properties:
-        BucketName: !Sub "${BucketNamePrefix}-thumbnail-smoqadam"
+        BucketName: !Sub "${BucketName}"
+  
+  ThumbBucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: !Sub "${BucketName}-thumbnail"
